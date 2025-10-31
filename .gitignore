@@ -1,0 +1,8 @@
+# Ignorar las librerias
+glm/
+include/
+lib/
+Overmask/
+shaders/
+x64/
+OverMask.*
