@@ -3,6 +3,6 @@ glm/
 include/
 lib/
 Overmask/
-shaders/
-x64/
-OverMask.*
+Debug/
+P10-320252367/
+x64/Debug/
