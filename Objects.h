@@ -12,8 +12,6 @@ public:
     Texture dirtTexture;
     Texture plainTexture;
     Texture pisoTexture;
-    Texture NaviTextureA;
-    Texture NaviTextureB;
 
     // Modelos
     Model Navi;
@@ -32,10 +30,21 @@ public:
     Model Ring;
     Model SkullKid;
 
-    // Paredes
-    Model ParedUno;
-	Model ParedDos;
+    // Limitadores de mapa
 
+    Model Cerca;
+    Model Pared;
+    Model Puesto;
+
+        // Cucko
+    Model CuckoBase;
+	Model CuckoAlaL;
+	Model CuckoAlaR;
+	Model CuckoPataL;
+	Model CuckoPataR;
+
+    // Mesa Caja
+    Model Mesa;
 
     Objects();
     ~Objects();

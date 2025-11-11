@@ -25,13 +25,6 @@ void Objects::LoadTextures()
     // Textura del piso (usa la que tengas activa)
     pisoTexture = Texture("Textures/pisomadera.png");
     pisoTexture.LoadTextureA();
-
-    // Cargar texturas de Navi
-    NaviTextureA = Texture("Texture/fairy_navi_baseColor");
-    NaviTextureA.LoadTextureA();
-
-    NaviTextureB = Texture("Texture/fairy_wings_baseColor");
-    NaviTextureB.LoadTextureA();
 }
 
 void Objects::LoadModels()
@@ -73,7 +66,7 @@ void Objects::LoadModels()
 
 	// Cargar Reloj
 	Reloj = Model();
-	Reloj.LoadModel("Models/Reloj.obj");
+	Reloj.LoadModel("Models/Reloj/Reloj.obj");
 
 	// Cargar Ring
 	Ring = Model();
@@ -83,12 +76,35 @@ void Objects::LoadModels()
 	SkullKid = Model();
 	SkullKid.LoadModel("Models/SkullKid.obj");
 
-    // Cargar Paredes
-    ParedUno = Model();
-	ParedUno.LoadModel("Models/Paredes/ParedUno.obj");
+	// Cargar Modelos delimitadores de mapa
+	Cerca = Model();
+	Cerca.LoadModel("Models/Paredes/Cerca.obj");
 
-	ParedDos = Model();
-	ParedDos.LoadModel("Models/Paredes/ParedDos.obj");
+	Pared = Model();
+	Pared.LoadModel("Models/Paredes/Pared.obj");
+
+	Puesto = Model();
+	Puesto.LoadModel("Models/Paredes/Puesto.obj");
+    
+	// Cargar Modelos de Cucko
+	CuckoBase = Model();
+	CuckoBase.LoadModel("Models/Cucko/CuckoBase.obj");
+
+	CuckoAlaL = Model();
+	CuckoAlaL.LoadModel("Models/Cucko/CuckoAlaL.obj");
+
+	CuckoAlaR = Model();
+	CuckoAlaR.LoadModel("Models/Cucko/CuckoAlaR.obj");
+
+	CuckoPataL = Model();
+	CuckoPataL.LoadModel("Models/Cucko/CuckoPataL.obj");
+
+	CuckoPataR = Model();
+	CuckoPataR.LoadModel("Models/Cucko/CuckoPataR.obj");
+
+	// Cargar Modelo de Mesa
+	Mesa = Model();
+	Mesa.LoadModel("Models/MesaCaja.obj");
 }   
 
 void Objects::LoadAll()

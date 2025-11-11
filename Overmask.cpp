@@ -54,9 +54,6 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 static const char* vShader = "shaders/shader_light.vert";
 static const char* fShader = "shaders/shader_light.frag";
 
-//función para teclado de keyframes 
-void inputKeyframes(bool* keys);
-
 //variables para keyframes
 float reproduciranimacion, habilitaranimacion, guardoFrame, reinicioFrame, ciclo, ciclo2, contador = 0;
 
@@ -162,115 +159,6 @@ void CreateShaders()
     shaderList.push_back(*shader1);
 }
 
-/////////////////////////////// KEYFRAMES NAVI /////////////////////
-
-bool animacion = false;
-
-// Variables de Navi
-float movNavi_x = 0.0f, movNavi_y = 2.5f, movNavi_z = 0.0f;
-float giroNavi = 0.0f;
-
-#define MAX_FRAMES 100
-int i_max_steps = 100;
-int i_curr_steps = 0;
-
-typedef struct _frame
-{
-    float movNavi_x;
-    float movNavi_y;
-    float movNavi_z;
-    float movNavi_xInc;
-    float movNavi_yInc;
-    float movNavi_zInc;
-    float giroNavi;
-    float giroNaviInc;
-} FRAME;
-
-FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;
-bool play = false;
-int playIndex = 0;
-
-// Guardar un Keyframe
-void saveFrame(void)
-{
-    printf("GUARDANDO KEYFRAME[%d]\n", FrameIndex);
-
-    KeyFrame[FrameIndex].movNavi_x = movNavi_x;
-    KeyFrame[FrameIndex].movNavi_y = movNavi_y;
-    KeyFrame[FrameIndex].movNavi_z = movNavi_z;
-    KeyFrame[FrameIndex].giroNavi = giroNavi;
-
-    std::ofstream archivo("keyframes.txt", std::ios::app);
-    if (archivo.is_open())
-    {
-        archivo << "KeyFrame[" << FrameIndex << "]: ";
-        archivo << "movNavi_x=" << movNavi_x << ", ";
-        archivo << "movNavi_y=" << movNavi_y << ", ";
-        archivo << "movNavi_z=" << movNavi_z << ", ";
-        archivo << "giroNavi=" << giroNavi << "\n";
-        archivo.close();
-        printf("✓ Frame guardado en 'keyframes.txt'\n");
-    }
-    else
-    {
-        printf("✗ ERROR: No se pudo abrir el archivo\n");
-    }
-
-    FrameIndex++;
-}
-
-// Reiniciar Navi al primer frame
-void resetElements(void)
-{
-    movNavi_x = KeyFrame[0].movNavi_x;
-    movNavi_y = KeyFrame[0].movNavi_y;
-    movNavi_z = KeyFrame[0].movNavi_z;
-    giroNavi = KeyFrame[0].giroNavi;
-}
-
-// Calcular interpolación entre frames
-void interpolation(void)
-{
-    KeyFrame[playIndex].movNavi_xInc = (KeyFrame[playIndex + 1].movNavi_x - KeyFrame[playIndex].movNavi_x) / i_max_steps;
-    KeyFrame[playIndex].movNavi_yInc = (KeyFrame[playIndex + 1].movNavi_y - KeyFrame[playIndex].movNavi_y) / i_max_steps;
-    KeyFrame[playIndex].movNavi_zInc = (KeyFrame[playIndex + 1].movNavi_z - KeyFrame[playIndex].movNavi_z) / i_max_steps;
-    KeyFrame[playIndex].giroNaviInc = (KeyFrame[playIndex + 1].giroNavi - KeyFrame[playIndex].giroNavi) / i_max_steps;
-}
-
-// Animar Navi entre keyframes
-void animate(void)
-{
-    if (play)
-    {
-        if (i_curr_steps >= i_max_steps)
-        {
-            playIndex++;
-            if (playIndex > FrameIndex - 2)
-            {
-                printf("Animación terminada.\n");
-                playIndex = 0;
-                play = false;
-            }
-            else
-            {
-                i_curr_steps = 0;
-                interpolation();
-            }
-        }
-        else
-        {
-            movNavi_x += KeyFrame[playIndex].movNavi_xInc;
-            movNavi_y += KeyFrame[playIndex].movNavi_yInc;
-            movNavi_z += KeyFrame[playIndex].movNavi_zInc;
-            giroNavi += KeyFrame[playIndex].giroNaviInc;
-            i_curr_steps++;
-        }
-    }
-}
-
-///////////////* FIN KEYFRAMES*////////////////////////////
-
 int main()
 {
     mainWindow = Window(1366, 768);
@@ -324,37 +212,12 @@ int main()
     glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 
     // Estado del personaje
-    glm::vec3 dekuPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 dekuPosition = glm::vec3(0.0f, -1.0f, 0.0f);
     float dekuRotation = 0.0f;
     float dekuSpeed = 1.0f;  
 
     float walkAnimationTime = 0.0f;
     bool isWalking = false;
-
-    printf(" REPRODUCCIÓN DE ANIMACIÓN\n");
-    printf("  [ESPACIO] → Reproducir / Pausar animación de Navi\n");
-    printf("  [0]       → Reiniciar animación al primer keyframe\n\n");
-
-    printf(" CREAR Y GUARDAR KEYFRAMES\n");
-    printf("  [L] → Guardar keyframe actual (posición y rotación)\n");
-    printf("  [P] → Habilitar guardar otro keyframe\n\n");
-
-    printf(" MOVIMIENTO DE Nᴀᴠɪ (ajustar posición manual)\n");
-    printf("  Eje X (horizontal):\n");
-    printf("     [1] → Mover izquierda (-1.0)\n");
-    printf("     [7] → Mover derecha  (+1.0)\n\n");
-
-    printf("  Eje Y (vertical):\n");
-    printf("     [3] → Bajar (-1.0)\n");
-    printf("     [9] → Subir (+1.0)\n\n");
-
-    printf("  Eje Z (profundidad):\n");
-    printf("     [Q] → Mover hacia atrás (-1.0)\n");
-    printf("     [E] → Mover hacia adelante (+1.0)\n\n");
-
-    printf("🔹 ROTACIÓN DE Nᴀᴠɪ\n");
-    printf("  [5] → Rotar hacia la derecha (+15° en eje Y)\n\n");
-    printf("════════════════════════════════════════════════════════\n\n");
 
     // Loop principal
     while (!mainWindow.getShouldClose())
@@ -366,10 +229,6 @@ int main()
 
         glfwPollEvents();
 
-        //-------Para Keyframes
-        inputKeyframes(mainWindow.getsKeys());
-        animate();
-
         // ===== ZOOM CON RUEDA DEL MOUSE =====
         float scrollOffset = mainWindow.getScrollChange();
         if (scrollOffset != 0.0f)
@@ -378,7 +237,7 @@ int main()
             currentDistance -= scrollOffset * 2.0f;
 
             if (currentDistance < 5.0f) currentDistance = 5.0f;
-            if (currentDistance > 30.0f) currentDistance = 30.0f;
+            if (currentDistance > 300.0f) currentDistance = 300.0f;
 
             camera.setThirdPersonDistance(currentDistance);
         }
@@ -417,7 +276,7 @@ int main()
         // ===== ANIMACIÓN DE CAMINATA =====
         if (isWalking)
         {
-            walkAnimationTime += deltaTime * 0.1f;  // ⭐ CORREGIDO: velocidad normal
+            walkAnimationTime += deltaTime * 0.1f;  //  velocidad 
         }
 
         float armSwing = isWalking ? sin(walkAnimationTime) * 30.0f : 0.0f;
@@ -448,15 +307,9 @@ int main()
         glm::vec3 lowerLight = camera.getCameraPosition();
         lowerLight.y -= 0.3f;
         spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
-
         shaderList[0].SetDirectionalLight(&mainLight);
         shaderList[0].SetPointLights(pointLights, pointLightCount);
         shaderList[0].SetSpotLights(spotLights, spotLightCount);
-
-        
-        // piso
-        RenderFloor(uniformModel, uniformColor, uniformSpecularIntensity,
-            uniformShininess, objects, Material_opaco, meshList);
 
         // Control luz Navi
         if (!mainWindow.getEstadoNavi()) {
@@ -467,27 +320,29 @@ int main()
             pointLights[1].setEstado(true);
         }
 
+        RenderFloor(uniformModel, uniformColor, uniformSpecularIntensity,
+            uniformShininess, objects, Material_opaco, meshList);
         RenderLampara(uniformModel, objects);
-        RenderChoza(uniformModel, objects);
         RenderSalesMan(uniformModel, objects);
         RenderPiramide(uniformModel, objects);
         RenderReloj(uniformModel, objects);
         RenderRing(uniformModel, objects);
         RenderSkullKid(uniformModel, objects);
         RenderDekuLink(uniformModel, objects, dekuPosition, dekuRotation, armSwing, legSwing);
-        RenderLuna(uniformModel, objects);
+        RenderLuna(uniformModel, objects, glfwGetTime());
 		RenderParedes(uniformModel, objects);
-
+        RenderCucko(uniformModel, objects, glfwGetTime());
+		RenderAmbiente(uniformModel, objects);
         //RenderNavi(uniformModel, objects, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f));
 		                                        // Traslación              // Rotación
         
         glm::vec3 naviPos(
-            movNavi_x + cos(glm::radians(giroNavi)) * 5.0f,
-            movNavi_y + sin(glfwGetTime() * 3.0f) * 0.5f, // leve oscilación
-            movNavi_z + sin(glm::radians(giroNavi)) * 5.0f
+            dekuPosition.x,
+            sin(glfwGetTime() * 3.0f) * 0.5f + 7.0, // leve oscilación
+            dekuPosition.z
         );
 
-        RenderNavi(uniformModel, objects, naviPos, glm::vec3(0.0f, giroNavi, 0.0f));
+        RenderNavi(uniformModel, objects, naviPos, glm::vec3(0.0f, dekuRotation, 0.0f));
 
         glDisable(GL_BLEND);
         glUseProgram(0);
@@ -495,120 +350,3 @@ int main()
     }
     return 0;
 }
-
-void inputKeyframes(bool* keys)
-{
-    static bool keyLock = false;  // Previene múltiples lecturas con una sola pulsación
-
-    // ======== REPRODUCIR ANIMACIÓN ========
-    if (keys[GLFW_KEY_SPACE] && !keyLock)
-    {
-        if (!play && FrameIndex > 1)
-        {
-            resetElements();
-            interpolation();
-            play = true;
-            playIndex = 0;
-            i_curr_steps = 0;
-            printf("▶ Reproduciendo animación de Navi...\n");
-        }
-        else if (play)
-        {
-            play = false;
-            printf("⏸ Animación pausada.\n");
-        }
-        keyLock = true;
-    }
-
-    // ======== REINICIAR ANIMACIÓN ========
-    if (keys[GLFW_KEY_0] && !keyLock)
-    {
-        resetElements();
-        play = false;
-        playIndex = 0;
-        printf("🔁 Navi reiniciada al primer keyframe.\n");
-        keyLock = true;
-    }
-
-    // ======== GUARDAR Y HABILITAR NUEVO FRAME ========
-    static bool guardado = false;
-
-    if (keys[GLFW_KEY_L] && !keyLock && !guardado)
-    {
-        saveFrame();
-        guardado = true;
-        printf(" Frame guardado. Presiona [P] para habilitar otro.\n");
-        keyLock = true;
-    }
-    if (keys[GLFW_KEY_P] && !keyLock)
-    {
-        guardado = false;
-        printf(" Guardado habilitado nuevamente.\n");
-        keyLock = true;
-    }
-
-    // ======== MOVIMIENTOS DE NAVI ========
-    // X (horizontal)
-    if (keys[GLFW_KEY_1] && !keyLock)
-    {
-        movNavi_x -= 1.0f;
-        printf("⬅ Navi X -1 → %.2f\n", movNavi_x);
-        keyLock = true;
-    }
-    if (keys[GLFW_KEY_7] && !keyLock)
-    {
-        movNavi_x += 1.0f;
-        printf("➡ Navi X +1 → %.2f\n", movNavi_x);
-        keyLock = true;
-    }
-
-    // Y (vertical)
-    if (keys[GLFW_KEY_3] && !keyLock)
-    {
-        movNavi_y -= 1.0f;
-        printf("⬇ Navi Y -1 → %.2f\n", movNavi_y);
-        keyLock = true;
-    }
-    if (keys[GLFW_KEY_9] && !keyLock)
-    {
-        movNavi_y += 1.0f;
-        printf("⬆ Navi Y +1 → %.2f\n", movNavi_y);
-        keyLock = true;
-    }
-
-    // Z (profundidad)
-    if (keys[GLFW_KEY_Q] && !keyLock)
-    {
-        movNavi_z -= 1.0f;
-        printf("↩ Navi Z -1 → %.2f\n", movNavi_z);
-        keyLock = true;
-    }
-    if (keys[GLFW_KEY_E] && !keyLock)
-    {
-        movNavi_z += 1.0f;
-        printf("↪ Navi Z +1 → %.2f\n", movNavi_z);
-        keyLock = true;
-    }
-
-    // Rotacion (y)
-    if (keys[GLFW_KEY_5] && !keyLock)
-    {
-        giroNavi += 15.0f;
-        if (giroNavi >= 360.0f) giroNavi -= 360.0f;
-        printf(" Navi rotación: %.2f°\n", giroNavi);
-        keyLock = true;
-    }
-
-    // ======== DESBLOQUEO ========
-    if (!keys[GLFW_KEY_SPACE] && !keys[GLFW_KEY_0] &&
-        !keys[GLFW_KEY_L] && !keys[GLFW_KEY_P] &&
-        !keys[GLFW_KEY_1] && !keys[GLFW_KEY_7] &&
-        !keys[GLFW_KEY_3] && !keys[GLFW_KEY_9] &&
-        !keys[GLFW_KEY_Q] && !keys[GLFW_KEY_E] &&
-        !keys[GLFW_KEY_5])
-    {
-        keyLock = false;
-    }
-}
-
-//////////////////////////// FIN KEYFRAMES NAVI /////////////////////
