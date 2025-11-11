@@ -16,3 +16,27 @@ KeyFrame[4]: movNavi_x=-10, movNavi_y=15.5, movNavi_z=92, giroNavi=240
 KeyFrame[5]: movNavi_x=-10, movNavi_y=15.5, movNavi_z=92, giroNavi=300
 KeyFrame[6]: movNavi_x=-10, movNavi_y=15.5, movNavi_z=92, giroNavi=345
 KeyFrame[7]: movNavi_x=-10, movNavi_y=15.5, movNavi_z=92, giroNavi=0
+KeyFrame[0].movAvion_x = 0f;
+KeyFrame[0].movAvion_y = 0f;
+KeyFrame[0].giroAvion = 0f;
+
+KeyFrame[1].movAvion_x = -2f;
+KeyFrame[1].movAvion_y = 4f;
+KeyFrame[1].giroAvion = 0f;
+
+KeyFrame[2].movAvion_x = -4f;
+KeyFrame[2].movAvion_y = 0f;
+KeyFrame[2].giroAvion = 0f;
+
+KeyFrame[3].movAvion_x = -6f;
+KeyFrame[3].movAvion_y = -4f;
+KeyFrame[3].giroAvion = 0f;
+
+KeyFrame[4].movAvion_x = -8f;
+KeyFrame[4].movAvion_y = 0f;
+KeyFrame[4].giroAvion = 0f;
+
+KeyFrame[5].movAvion_x = -10f;
+KeyFrame[5].movAvion_y = 4f;
+KeyFrame[5].giroAvion = 0f;
+
