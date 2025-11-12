@@ -281,7 +281,7 @@ void RenderDekuLink(GLuint uniformModel, Objects& objects, glm::vec3 position,
     model = modelBase;
     model = glm::translate(model, glm::vec3(2.0f, 12.0f, 0.0f));
     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(-armSwing), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(armSwing), glm::vec3(1.0f, 0.0f, 0.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.DekuBrazo.RenderModel();
 
