@@ -21,7 +21,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	height = windowHeight;
 	muevex = 2.0f;
 	helicopterx = 0.0f;
-	navi = true;
+	navi = false;
 	movingForward = false;
 	movingBackward = false;
 	movingLeft = false;
