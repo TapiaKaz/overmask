@@ -389,6 +389,13 @@ void RenderAmbiente(GLuint uniformModel, Objects& objects)
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.Choza.RenderModel();
 
+    // Linterna de choza
+    model = glm::mat4(1.0);
+    model = glm::translate(model, glm::vec3(90.0f, -1.0f, 70.0f));
+    model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    objects.Lamp.RenderModel();
+
     // Mesa Caja
     model = glm::mat4(1.0);
     model = glm::translate(model, glm::vec3(90.0f, -1.0f, 25.0f));

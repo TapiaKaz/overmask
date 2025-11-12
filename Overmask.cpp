@@ -265,6 +265,12 @@ int main()
     float dayNightCycle = 0.0f;           // 0.0 a 1.0
     float cycleSpeed = 1.0f / 20.0f;     // Ciclo completo en 120 segundos (2 minutos)
     bool autoCycle = true;                // Ciclo automático activado
+    float sunAngle;
+    float sunDirX;
+    float sunDirY;
+    float sunDirZ;
+    // Intensidad de la luz
+    float currentAmbient, currentDiffuse;
 
     // Loop principal
     while (!mainWindow.getShouldClose())
@@ -287,7 +293,7 @@ int main()
 
         glm::vec3 currentLightColor;
 
-        // Transición de colores sincronizada con skybox
+        // Transición de colores sincronizada con skybox ========
         if (dayNightCycle < 0.4f)
         {
             currentLightColor = dayLightColor;
@@ -307,9 +313,6 @@ int main()
             currentLightColor = nightLightColor;
         }
 
-        // Intensidad de la luz
-        float currentAmbient, currentDiffuse;
-
         if (dayNightCycle < 0.5f)
         {
             currentAmbient = 0.8f;
@@ -322,11 +325,11 @@ int main()
             currentDiffuse = glm::mix(0.6f, 0.1f, t);
         }
 
-        // Dirección del sol (arco completo sincronizado)
-        float sunAngle = dayNightCycle * 3.14159f;
-        float sunDirX = sin(sunAngle) * 0.3f;
-        float sunDirY = -cos(sunAngle);
-        float sunDirZ = -0.3f;
+        // Dirección del sol ========================
+        sunAngle = dayNightCycle * 3.14159f;
+        sunDirX = sin(sunAngle) * 0.3f;
+        sunDirY = -cos(sunAngle);
+        sunDirZ = -0.3f;
 
         mainLight = DirectionalLight(
             currentLightColor.r, currentLightColor.g, currentLightColor.b,
@@ -460,14 +463,6 @@ int main()
             sin(glfwGetTime() * 3.0f) * 0.5f + 7.0, // leve oscilación
             dekuPosition.z
         );
-        /*
-        glm::mat4 model = glm::mat4(1.0);
-        model = glm::translate(model, glm::vec3(0.0f, 10.0f, -6.0f));
-        model = glm::rotate(model, glm::radians(time * 50), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(10000.5f,100000.5,1000000.5));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        objects.Manecillas.RenderModel();
-        */
 
         RenderNavi(uniformModel, objects, naviPos, glm::vec3(0.0f, dekuRotation, 0.0f));
 
