@@ -218,30 +218,30 @@ int main()
 
     // Navi - Lo pongo aqui primero, por que su luz no depende del dia ni de la noche
     pointLights[0] = PointLight(0.6f, 0.0f, 0.6f,
-        50.0f, 10.0f,
+        20.0f, 10.0f,
         0.0f, 0.0f, 0.0f,
         1.3f, 1.2f, 1.1f);
     pointLightCount++;
 
     // Farol 1 - Los de aca son extras que después le tengo que mandar al shader cuando sea de noche
     pointLights[1] = PointLight(1.0f, 1.0f, 1.0f, 
-        50.0f, 10.0f,          // Intensidad
+        50.0f, 15.0f,          // Intensidad
         80.0f, 35.0f, 70.0f,  // Posición
-        1.3f, 1.2f, 1.1f);   // Atenuación
-    pointLightCount++;
-
-    // Farol 3
-    pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
-        50.0f, 10.0f,
-        -130.0f, 35.0f, 180.0f,
-        1.3f, 1.2f, 1.1f);
+        0.3f, 0.2f, 0.1f);   // Atenuación
     pointLightCount++;
 
     // Farol 2
+    pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
+        50.0f, 15.0f,
+        -130.0f, 35.0f, 180.0f,
+        0.3f, 0.2f, 0.1f);
+    pointLightCount++;
+
+    // Farol 3
     pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
-        50.0f, 10.0f,
+        50.0f, 15.0f,
         -130.0f, 35.0f, 120.0f,
-        1.3f, 1.2f, 1.1f);
+        0.3f, 0.2f, 0.1f);
     pointLightCount++;
 
 
@@ -451,9 +451,7 @@ int main()
 		RenderParedes(uniformModel, objects);
         RenderCucko(uniformModel, objects, glfwGetTime());
 		RenderAmbiente(uniformModel, objects);
-        //RenderNavi(uniformModel, objects, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f));
-		                                        // Traslación              // Rotación
-        
+
         glm::vec3 naviPos(
             dekuPosition.x,
             sin(glfwGetTime() * 3.0f) * 0.5f + 7.0, // leve oscilación
@@ -471,7 +469,7 @@ int main()
             float dekuRadians = glm::radians(dekuRotation);
             glm::vec3 dekuDirection(
                 sin(dekuRadians),  // X
-                -0.3f,             // Y (ligeramente hacia abajo)
+                -0.3f,             // Y (apuntando un poco acia abajo)
                 cos(dekuRadians)   // Z
             );
 
