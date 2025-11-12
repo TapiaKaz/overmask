@@ -207,42 +207,53 @@ int main()
     Material_brillante = Material(4.0f, 256);
     Material_opaco = Material(0.3f, 4);
 
-    // Luces =================
-	// Directional light Simula sol
-    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.8f, 0.6f, 0.0f, -1.0f, -0.3f);
+    // =============== LUCES =================
+	// Directional light Simula sol | la luz que siempre debe de estar ademas
+    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+        0.8f, 0.6f,
+        0.0f, -1.0f, -0.3f);
 
 	// Point Lights, faroles, etc -----------
     unsigned int pointLightCount = 0;
-    // Farol 1
-    pointLights[0] = PointLight(1.0f, 0.8f, 0.6f,  // Color cálido (amarillo)
-        0.0f, 0.0f,          // Apagado inicialmente
-        5.0f, 3.0f, -20.0f,  // Posición
-        0.3f, 0.2f, 0.1f);   // Atenuación
+
+    // Navi - Lo pongo aqui primero, por que su luz no depende del dia ni de la noche
+    pointLights[0] = PointLight(0.6f, 0.0f, 0.6f,
+        50.0f, 10.0f,
+        0.0f, 0.0f, 0.0f,
+        1.3f, 1.2f, 1.1f);
     pointLightCount++;
 
-    // Farol 2
-    pointLights[1] = PointLight(1.0f, 0.8f, 0.6f,
-        0.0f, 0.0f,
-        -5.0f, 3.0f, -20.0f,
-        0.3f, 0.2f, 0.1f);
+    // Farol 1 - Los de aca son extras que después le tengo que mandar al shader cuando sea de noche
+    pointLights[1] = PointLight(1.0f, 1.0f, 1.0f, 
+        50.0f, 10.0f,          // Intensidad
+        80.0f, 35.0f, 70.0f,  // Posición
+        1.3f, 1.2f, 1.1f);   // Atenuación
     pointLightCount++;
 
     // Farol 3
-    pointLights[2] = PointLight(1.0f, 0.8f, 0.6f,
-        0.0f, 0.0f,
-        0.0f, 3.0f, 20.0f,
-        0.3f, 0.2f, 0.1f);
+    pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
+        50.0f, 10.0f,
+        -130.0f, 35.0f, 180.0f,
+        1.3f, 1.2f, 1.1f);
     pointLightCount++;
 
-	// Spot Lights linterna del personaje (Navi) -----------
+    // Farol 2
+    pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
+        50.0f, 10.0f,
+        -130.0f, 35.0f, 120.0f,
+        1.3f, 1.2f, 1.1f);
+    pointLightCount++;
+
+
+	// Spot Lights Linterna navi -----------
     unsigned int spotLightCount = 0;
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
-        0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        0.0f, -1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-		20.0f);
-    pointLightCount++;
+        0.3f, 3.0f,                 // intensidades ambiental y difusa
+        0.0f, 0.0f, 0.0f,           // posición
+        0.0f, -1.0f, 0.0f,          // dirección
+        1.0f, 0.045f, 0.0075f,      // atenuación
+        20.0f);                     // ángulo más concentrado
+    spotLightCount++;
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
         uniformSpecularIntensity = 0, uniformShininess = 0;
@@ -269,8 +280,19 @@ int main()
     float sunDirX;
     float sunDirY;
     float sunDirZ;
-    // Intensidad de la luz
+
+    // Colores según hora del día
+    glm::vec3 dayLightColor(1.0f, 0.95f, 0.8f);
+    glm::vec3 sunsetColor(1.0f, 0.6f, 0.3f);
+    glm::vec3 nightLightColor(0.15f, 0.15f, 0.3f);
+
+    glm::vec3 currentLightColor;
+
+    // Intensidad de la luz del sol
     float currentAmbient, currentDiffuse;
+
+    // Variables para apagar luces en el dia
+    GLuint activeLightCount;
 
     // Loop principal
     while (!mainWindow.getShouldClose())
@@ -284,14 +306,7 @@ int main()
 
 		// ===== CONFIGURACIÓN DE ILUMINACIÓN SEGÚN HORA DEL DÍA =====
         // Normalizar el tiempo al ciclo (0.0 a 1.0)
-        float dayNightCycle = time / dayDuration;
-
-        // Colores según hora del día
-        glm::vec3 dayLightColor(1.0f, 0.95f, 0.8f);
-        glm::vec3 sunsetColor(1.0f, 0.6f, 0.3f);
-        glm::vec3 nightLightColor(0.15f, 0.15f, 0.3f);
-
-        glm::vec3 currentLightColor;
+        dayNightCycle = time / dayDuration;
 
         // Transición de colores sincronizada con skybox ========
         if (dayNightCycle < 0.4f)
@@ -381,7 +396,7 @@ int main()
             }
         }
 
-        // ===== ANIMACIÓN DE CAMINATA =====
+        // ===== ANIMACION DE CAMINATA =====
         if (isWalking)
         {
             walkAnimationTime += deltaTime * 0.1f;  //  velocidad 
@@ -394,11 +409,11 @@ int main()
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
         camera.followTarget(dekuPosition + glm::vec3(0.0f, 2.0f, 0.0f), deltaTime);
 
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Logica para tiempo en programa (dia, atardecer, noche) ==============
+
+		// ======= == MANEJO DEL TIEMPO (dia, atardecer, noche) ==============
         if (time < dayDuration/2) {
             SkyboxDay.DrawSkybox(camera.calculateViewMatrix(), projection);
         }
@@ -407,7 +422,7 @@ int main()
             if (time >= dayDuration) {
                 time = 0.0f;
 			}
-        }
+		} // cada etapa del dia (noche, dia) corresponde a la mitad del tiempo total
         time++;
 
 
@@ -423,27 +438,8 @@ int main()
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
         glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-
-
-        // Configuración de Luces =============
-        glm::vec3 lowerLight = camera.getCameraPosition();
-        lowerLight.y -= 0.3f;
-        spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
-        shaderList[0].SetDirectionalLight(&mainLight);
-        shaderList[0].SetPointLights(pointLights, pointLightCount);
-        shaderList[0].SetSpotLights(spotLights, spotLightCount);
-
-        // Control luz Navi
-        if (!mainWindow.getEstadoNavi()) {
-            pointLights[1].setEstado(false);
-        }
-        else {
-            pointLights[1].changeColor(1.0f, 0.0f, 1.0f);
-            pointLights[1].setEstado(true);
-        }
-
-        RenderFloor(uniformModel, uniformColor, uniformSpecularIntensity,
-            uniformShininess, objects, Material_opaco, meshList);
+     
+        RenderFloor(uniformModel, uniformColor, uniformSpecularIntensity, uniformShininess, objects, Material_opaco, meshList);
         RenderLampara(uniformModel, objects);
         RenderSalesMan(uniformModel, objects);
         RenderPiramide(uniformModel, objects);
@@ -465,6 +461,44 @@ int main()
         );
 
         RenderNavi(uniformModel, objects, naviPos, glm::vec3(0.0f, dekuRotation, 0.0f));
+
+        // ===== CONFIGURAR SPOT LIGHT (Navi) - Independiente del al ciclo día/noche =====
+        unsigned int activeSpotLightCount = 0;
+
+        if (mainWindow.getEstadoNavi())
+        {
+            // Calcular la dirección hacia donde mira Deku basándose en su rotación
+            float dekuRadians = glm::radians(dekuRotation);
+            glm::vec3 dekuDirection(
+                sin(dekuRadians),  // X
+                -0.3f,             // Y (ligeramente hacia abajo)
+                cos(dekuRadians)   // Z
+            );
+
+            spotLights[0].SetFlash(naviPos, dekuDirection);
+            activeSpotLightCount = 1;
+        }
+        else
+        {
+            activeSpotLightCount = 0; // Navi apagada, no se envía al shader
+        }
+        
+        // =================== CONFIGURACIÓN DE POINT LIHGTS PARA DIA Y NOCHE ==============
+
+		// Luz puntual de navi (con la que brilla) ==============
+		pointLights[0].setPosition(naviPos);
+
+		activeLightCount = 1; // La cuenta empieza en 1, por que la luz de navi siempre esta activa
+
+        bool isNight = (dayNightCycle >= 0.575f); // Lo puse un poco mas después de las 0.5 para que se note como se apagan y prenden las luces
+
+        if (isNight) activeLightCount = pointLightCount; // Todas las point lights activas (La de los faros)
+        else activeLightCount = 1; // NO se envían point lights al shader (Excepto la de Navi)
+        
+        // ===== ENVIAR LUCES AL SHADER =====
+        shaderList[0].SetDirectionalLight(&mainLight);
+        shaderList[0].SetPointLights(pointLights, activeLightCount);
+        shaderList[0].SetSpotLights(spotLights, activeSpotLightCount);   
 
         glDisable(GL_BLEND);
         glUseProgram(0);
