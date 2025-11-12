@@ -24,10 +24,6 @@ public:
 	GLfloat getMovimientoAuto() { return movimientoAuto; }
 	GLboolean getEstadoNavi() { return navi; }
 
-	// ==========================================
-	// NUEVOS MÉTODOS PARA CONTROL DEL PERSONAJE
-	// ==========================================
-
 	// Retorna true si hay algún input de movimiento (WASD)
 	bool isMoving() { return movingForward || movingBackward || movingLeft || movingRight; }
 
@@ -37,9 +33,6 @@ public:
 	bool isMovingLeft() { return movingLeft; }
 	bool isMovingRight() { return movingRight; }
 
-	// ==========================================
-	// NUEVO: SOPORTE PARA RUEDA DEL MOUSE (SCROLL)
-	// ==========================================
 	GLfloat getScrollChange();
 
 	~Window();

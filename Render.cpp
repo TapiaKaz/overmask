@@ -63,14 +63,22 @@ void RenderPiramide(GLuint uniformModel, Objects& objects, glm::vec3 position)
     objects.Piramide.RenderModel();
 }
 
-void RenderReloj(GLuint uniformModel, Objects& objects, glm::vec3 position)
+void RenderReloj(GLuint uniformModel, Objects& objects, GLfloat time, glm::vec3 position)
 {
     glm::mat4 model = glm::mat4(1.0);
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(550.0f, 450.0f, 550.0f));
+    model = glm::scale(model, glm::vec3(850.0f, 750.0f, 850.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.Reloj.RenderModel();
+
+    model = glm::mat4(1.0);
+    model = glm::translate(model, position+glm::vec3(-1.5f,74.0f,-28.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(time * 26.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(850.0f, 850.0f, 850.0f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    objects.Manecillas.RenderModel();
 }
 
 void RenderRing(GLuint uniformModel, Objects& objects, glm::vec3 position)
@@ -78,9 +86,10 @@ void RenderRing(GLuint uniformModel, Objects& objects, glm::vec3 position)
     glm::mat4 model = glm::mat4(1.0);
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(2.5f, 2.0f, 2.5f));
+    model = glm::scale(model, glm::vec3(3.5f, 3.0f, 3.5f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.Ring.RenderModel();
+ 
 }
 
 // Render Limitadores de mapa
@@ -322,30 +331,54 @@ void RenderNavi(GLuint uniformModel, Objects& objects, glm::vec3 position, glm::
 
 void RenderCucko(GLuint uniformModel, Objects& objects, GLfloat time) {
     glm::mat4 model = glm::mat4(1.0);
-    model = glm::translate(model, glm::vec3(-100.0f, -1.0f, 57.5f));
-    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    
+    // === CICLO DE MOVIMIENTO ===
+    GLfloat cycle = fmod(time, 8.0f);
+    bool forward = cycle < 4.0f;
+    GLfloat progress = forward ? cycle / 4.0f : (cycle - 4.0f) / 4.0f;
+    GLfloat move = forward ? progress * 15.0f : 15.0f - progress * 15.0f;
+    GLfloat rot = forward ? 0.0f : 180.0f;
+    
+    model = glm::translate(model, glm::vec3(-100.0f, -1.0f, 57.5f - move));
+    model = glm::rotate(model, glm::radians(180.0f + rot), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
     glm::mat4 modelaux = model;
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    
+    modelaux = glm::translate(modelaux, glm::vec3(0.0f, sin(time * 5.0f) * 0.15f, 0.0f));
+    modelaux = glm::rotate(modelaux, glm::radians(sin(time * 3.0f) * 2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
     objects.CuckoBase.RenderModel();
-
+    
+    GLfloat wing = sin(time * 8.0f) * 45.0f + 15.0f;
+    
     model = modelaux;
-    model = glm::rotate(model, glm::radians(time*20), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-1.0f, 2.2f, 0.0f));
+    model = glm::rotate(model, glm::radians(-wing), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(sin(time * 8.0f) * 10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.CuckoAlaL.RenderModel();
-
+    
     model = modelaux;
-    model = glm::rotate(model, glm::radians(time*20), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(1.0f, 2.2f, 0.0f));
+    model = glm::rotate(model, glm::radians(wing), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(sin(time * 8.0f) * 10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     objects.CuckoAlaR.RenderModel();
-
+    
+    model = modelaux;
+    model = glm::translate(model, glm::vec3(-0.5f, 0.5f + abs(sin(time * 4.0f)) * 0.2f, -0.95f));
+    model = glm::rotate(model, glm::radians(sin(time * 4.0f) * 25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(sin(time * 4.0f) * 5.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    objects.CuckoPataR.RenderModel();
-
+    objects.CuckoPata.RenderModel();
+    
+    model = modelaux;
+    model = glm::translate(model, glm::vec3(0.5f, 0.5f + abs(sin(time * 4.0f + 3.14159f)) * 0.2f, -0.95f));
+    model = glm::rotate(model, glm::radians(sin(time * 4.0f + 3.14159f) * 25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(sin(time * 4.0f + 3.14159f) * 5.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    objects.CuckoPataL.RenderModel();
+    objects.CuckoPata.RenderModel();
 }
-
 // Ambiente
 void RenderAmbiente(GLuint uniformModel, Objects& objects)
 {

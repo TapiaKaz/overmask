@@ -41,13 +41,12 @@ void RenderParedes(GLuint uniformModel, Objects& objects);
 
 void RenderLampara(GLuint uniformModel, Objects& objects);
 
-
 void RenderPiramide(GLuint uniformModel, Objects& objects,
     glm::vec3 position = glm::vec3(-250.0f, -2.5f, 150.0f));
 
 void RenderAmbiente(GLuint uniformModel, Objects& objects);
 
-void RenderReloj(GLuint uniformModel, Objects& objects,
+void RenderReloj(GLuint uniformModel, Objects& objects, GLfloat time,
     glm::vec3 position = glm::vec3(0.0f, -1.0f, 300.0f));
 
 void RenderRing(GLuint uniformModel, Objects& objects,
