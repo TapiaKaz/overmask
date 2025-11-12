@@ -26,7 +26,10 @@ public:
     Model Luna;
     Model Salesman;
     Model Piramide;
+
+    // Modelos Pare Reloj
     Model Reloj;
+    Model Manecillas;
     Model Ring;
     Model SkullKid;
 
@@ -40,8 +43,7 @@ public:
     Model CuckoBase;
 	Model CuckoAlaL;
 	Model CuckoAlaR;
-	Model CuckoPataL;
-	Model CuckoPataR;
+    Model CuckoPata;
 
     // Mesa Caja
     Model Mesa;

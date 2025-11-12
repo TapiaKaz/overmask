@@ -64,9 +64,12 @@ void Objects::LoadModels()
     Piramide = Model();
 	Piramide.LoadModel("Models/Piramide.obj");
 
-	// Cargar Reloj
+	// Carga Modelos para Reloj
 	Reloj = Model();
 	Reloj.LoadModel("Models/Reloj/Reloj.obj");
+
+	Manecillas = Model();
+	Manecillas.LoadModel("Models/Reloj/Manecillas.obj");
 
 	// Cargar Ring
 	Ring = Model();
@@ -96,11 +99,8 @@ void Objects::LoadModels()
 	CuckoAlaR = Model();
 	CuckoAlaR.LoadModel("Models/Cucko/CuckoAlaR.obj");
 
-	CuckoPataL = Model();
-	CuckoPataL.LoadModel("Models/Cucko/CuckoPataL.obj");
-
-	CuckoPataR = Model();
-	CuckoPataR.LoadModel("Models/Cucko/CuckoPataR.obj");
+	CuckoPata = Model();
+	CuckoPata.LoadModel("Models/Cucko/CuckoPata.obj");
 
 	// Cargar Modelo de Mesa
 	Mesa = Model();
