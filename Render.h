@@ -19,10 +19,10 @@ void RenderDekuLink(GLuint uniformModel, Objects& objects,
 
 // NPCs
 void RenderSalesMan(GLuint uniformModel, Objects& objects,
-    glm::vec3 position = glm::vec3(8.0f, 3.5f, 110.0f));
+    glm::vec3 position = glm::vec3(8.0f, 5.2f, 110.0f));
 
 void RenderSkullKid(GLuint uniformModel, Objects& objects,
-    glm::vec3 position = glm::vec3(-10.0f, 3.5f, 90.0f));
+    glm::vec3 position = glm::vec3(-10.0f, 5.2f, 90.0f));
 
 void RenderNavi(GLuint uniformModel, Objects& objects,
     glm::vec3 position, glm::vec3 rotation);
