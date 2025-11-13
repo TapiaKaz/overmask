@@ -1,4 +1,4 @@
-# 🎭 Overmask - Proyecto Final CG
+# Overmask - Proyecto Final Computacion Grafica
 
 > Ambiente virtual interactivo basado en *The Legend of Zelda: Majora's Mask* con elementos prehispánicos y de lucha libre mexicana.
 
@@ -27,3 +27,12 @@
 |-------|--------|
 | `ESC` | Salir del programa |
 
+## Información del Proyecto
+
+**Autor:** Ávila Martínez Alonso  
+**Cuenta:** 320237988  
+**Curso:** Computación Gráfica e IHC  
+**Semestre:** 2026-1  
+**UNAM - Facultad de Ingeniería**
+
+---
