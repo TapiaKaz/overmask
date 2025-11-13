@@ -22,6 +22,7 @@ public:
     Model DekuBase;
     Model DekuBrazo;
 	Model DekuPierna;
+    Model Nuez;
 
     Model Luna;
     Model Salesman;

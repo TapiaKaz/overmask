@@ -22,7 +22,12 @@ public:
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 
 	GLfloat getMovimientoAuto() { return movimientoAuto; }
+
+	// Navi getters ========
+	// Getter para prender la linterna
 	GLboolean getEstadoNavi() { return navi; }
+	// Getter para hacer que navi de una vuelta alrededor de Link
+	GLboolean getEstadoNaviF() { return naviF; }
 
 	// Retorna true si hay algún input de movimiento (WASD)
 	bool isMoving() { return movingForward || movingBackward || movingLeft || movingRight; }
@@ -33,6 +38,10 @@ public:
 	bool isMovingLeft() { return movingLeft; }
 	bool isMovingRight() { return movingRight; }
 
+	// Getter para mouse ========
+	// click izquierdo
+	bool getLeftMouseButton();
+	// la ruedita del mouse
 	GLfloat getScrollChange();
 
 	~Window();
@@ -50,6 +59,7 @@ private:
 	GLfloat muevex, helicopterx;
 	GLfloat movimientoAuto;
 	GLboolean navi;
+	GLboolean naviF;
 	bool mouseFirstMoved;
 
 	// Estados de movimiento
