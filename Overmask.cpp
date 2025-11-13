@@ -158,10 +158,23 @@ void CreateShaders()
     shader1->CreateFromFiles(vShader, fShader);
     shaderList.push_back(*shader1);
 }
+struct Nuez {
+    glm::vec3 pos;
+    glm::vec3 dir;
+    bool activa;
+};
+
+std::vector<Nuez> nueces;
+bool clickAnterior = false;
+// Variables para animación de Navi
+bool naviAnimating = false;
+float naviAnimationAngle = 0.0f;
+float naviAnimationSpeed = 5.0f; // grados por segundo
+bool fKeyPressedBefore = false;
 
 int main()
 {
-    mainWindow = Window(1366, 768);
+    mainWindow = Window(1440, 990);
     mainWindow.Initialise();
 
     CreateObjects();
@@ -438,7 +451,20 @@ int main()
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
         glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-     
+        
+        // ======= SECCIÓN PARA NUECES ======
+        // Disparar con click izquierdo
+        bool clickActual = mainWindow.getLeftMouseButton();
+        if (clickActual && !clickAnterior) {
+            Nuez n;
+            float rad = glm::radians(dekuRotation);
+            n.pos = dekuPosition + glm::vec3(0.0f, 2.5f, 0.0f);
+            n.dir = glm::vec3(sin(rad), 0.0f, cos(rad));
+            n.activa = true;
+            nueces.push_back(n);
+        }
+        clickAnterior = clickActual;
+
         RenderFloor(uniformModel, uniformColor, uniformSpecularIntensity, uniformShininess, objects, Material_opaco, meshList);
         RenderLampara(uniformModel, objects);
         RenderSalesMan(uniformModel, objects);
@@ -452,12 +478,56 @@ int main()
         RenderCucko(uniformModel, objects, glfwGetTime());
 		RenderAmbiente(uniformModel, objects);
 
-        glm::vec3 naviPos(
-            dekuPosition.x,
-            sin(glfwGetTime() * 3.0f) * 0.5f + 7.0, // leve oscilación
-            dekuPosition.z
-        );
+		// Renderizar nueces
+        for (auto& n : nueces) {
+            if (n.activa) {
+                n.pos += n.dir * 1.5f * deltaTime;
+                if (glm::length(n.pos) > 1000.0f) { n.activa = false; continue; }
 
+                glm::mat4 model = glm::mat4(1.0);
+                model = glm::translate(model, n.pos);
+                model = glm::scale(model, glm::vec3(0.5f));
+                glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+                objects.Nuez.RenderModel();
+            }
+        }
+
+        // ===== ANIMACIÓN DE NAVI =====
+        bool fKeyPressed = mainWindow.getEstadoNaviF();
+        if (fKeyPressed && !fKeyPressedBefore && !naviAnimating) {
+            naviAnimating = true;
+            naviAnimationAngle = 0.0f;
+        }
+        fKeyPressedBefore = fKeyPressed;
+
+        glm::vec3 naviPos;
+        if (naviAnimating) {
+            // Dar vuelta alrededor de Link
+            naviAnimationAngle += naviAnimationSpeed * deltaTime;
+
+            float radius = 3.0f; // Radio de la órbita
+            float rad = glm::radians(naviAnimationAngle);
+
+            naviPos = dekuPosition + glm::vec3(
+                cos(rad) * radius,
+                sin(glfwGetTime() * 3.0f) * 0.5f + 7.0f,
+                sin(rad) * radius
+            );
+
+            // Terminar animación después de una vuelta completa
+            if (naviAnimationAngle >= 360.0f) {
+                naviAnimating = false;
+            }
+        }
+        else {
+            // Posición normal
+            naviPos = glm::vec3(
+                dekuPosition.x,
+                sin(glfwGetTime() * 3.0f) * 0.5f + 7.0f,
+                dekuPosition.z
+            );
+        }
+        
         RenderNavi(uniformModel, objects, naviPos, glm::vec3(0.0f, dekuRotation, 0.0f));
 
         // ===== CONFIGURAR SPOT LIGHT (Navi) - Independiente del al ciclo día/noche =====

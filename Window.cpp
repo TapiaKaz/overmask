@@ -8,7 +8,7 @@ Window::Window()
 	movingBackward = false;
 	movingLeft = false;
 	movingRight = false;
-	scrollChange = 0.0f;  // NUEVO
+	scrollChange = 0.0f;  
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -26,7 +26,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	movingBackward = false;
 	movingLeft = false;
 	movingRight = false;
-	scrollChange = 0.0f;  // NUEVO
+	scrollChange = 0.0f;  
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -107,9 +107,6 @@ GLfloat Window::getYChange()
 	return theChange;
 }
 
-// ==========================================
-// NUEVO: Método para obtener cambio de scroll
-// ==========================================
 GLfloat Window::getScrollChange()
 {
 	GLfloat theChange = scrollChange;
@@ -126,14 +123,16 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	// Control de Navi con ESPACIO
+	// Control de Navi  ===============================
+	// Expacio para Prender Linterna
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 		theWindow->navi = !(theWindow->navi);
 
-	// ==========================================
-	// CONTROL DE MOVIMIENTO WASD
-	// ==========================================
+	// Tecla F - Hacer que navi de una vuelta alrededor de Link
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+		theWindow->naviF = !(theWindow->naviF);
 
+	// Movimiento con ASDW ============================
 	// Tecla W - Adelante
 	if (key == GLFW_KEY_W)
 	{
@@ -218,16 +217,16 @@ void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastY = yPos;
 }
 
-// ==========================================
-// NUEVO: Callback para la rueda del mouse
-// ==========================================
+
 void Window::ManejaScroll(GLFWwindow* window, double xOffset, double yOffset)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-
-	// yOffset: positivo = scroll hacia arriba (zoom in)
-	//          negativo = scroll hacia abajo (zoom out)
 	theWindow->scrollChange = yOffset;
+}
+
+bool Window::getLeftMouseButton()
+{
+	return glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 }
 
 Window::~Window()

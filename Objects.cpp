@@ -105,6 +105,10 @@ void Objects::LoadModels()
 	// Cargar Modelo de Mesa
 	Mesa = Model();
 	Mesa.LoadModel("Models/MesaCaja.obj");
+
+	// Cargar Modelo de Nuez
+	Nuez = Model();
+	Nuez.LoadModel("Models/DekuLink/Nuez.obj");
 }   
 
 void Objects::LoadAll()
