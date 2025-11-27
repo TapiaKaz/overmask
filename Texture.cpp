@@ -24,10 +24,7 @@ bool Texture::LoadTextureA()
 	//para cambiar el origen a la esquina inferior izquierda como necesitamos
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, STBI_rgb_alpha); //el tipo unsigned char es para un array de bytes de la imagen, obtener datos de la imagen 
-	if (!texData)
-	{
-		printf("No se encontró el archivo: %s", fileLocation);
-	}
+
 	glGenTextures(1, &textureID); //parecido al VAO: crear una textura y asignarle un índice
 	glBindTexture(GL_TEXTURE_2D, textureID);//se indica que la textura es de tipo 2D, para superficies planas es suficiente esta textura
 
@@ -57,10 +54,7 @@ bool Texture::LoadTexture()
 	//para cambiar el origen a la esquina inferior izquierda como necesitamos
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0); //el tipo unsigned char es para un array de bytes de la imagen, obtener datos de la imagen 
-	if (!texData)
-	{
-		printf("No se encontró el archivo: %s", fileLocation);
-	}
+
 	glGenTextures(1, &textureID); //parecido al VAO: crear una textura y asignarle un índice
 	glBindTexture(GL_TEXTURE_2D, textureID);//se indica que la textura es de tipo 2D, para superficies planas es suficiente esta textura
 
