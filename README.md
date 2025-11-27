@@ -29,7 +29,7 @@
 
 ## Información del Proyecto
 
-**Autor:** Ávila Martínez Alonso  
+**Autor:** Tapia Garcia Andrés
 **Cuenta:** 320237988  
 **Curso:** Computación Gráfica e IHC  
 **Semestre:** 2026-1  
